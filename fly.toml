@@ -13,8 +13,9 @@ console_command = 'php /var/www/html/artisan tinker'
     PHP_VERSION = '8.3'
 
 [env]
-  APP_URL = "https://simple-todos.fly.dev/"
+  APP_URL = 'https://simple-todos.fly.dev/'
   APP_ENV = 'production'
+  DB_CONNECTION = 'pgsql'
   LOG_CHANNEL = 'stderr'
   LOG_LEVEL = 'info'
   LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
@@ -30,7 +31,7 @@ console_command = 'php /var/www/html/artisan tinker'
   processes = ['app']
 
 [deploy]
-  release_command = "php /var/www/html/artisan migrate --force"
+  release_command = 'php /var/www/html/artisan migrate --force'
 
 [[vm]]
   size = 'shared-cpu-1x'
