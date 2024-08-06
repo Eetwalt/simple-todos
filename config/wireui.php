@@ -18,7 +18,7 @@ return [
     |
      */
 
-    'prefix' => '',
+    'prefix' => 'wui-',
 
     /*
     |--------------------------------------------------------------------------
@@ -115,8 +115,8 @@ return [
      */
 
     'components' => Config::defaultComponents([
-        // 'button' => [
-        //     'alias' => 'new-button',
+        // 'input' => [
+        //     'color' => 'secondary',
         // ],
         // 'mini-button' => [
         //     'class' => Components\Button\Mini::class,
