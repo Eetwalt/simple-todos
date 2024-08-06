@@ -13,7 +13,7 @@ console_command = 'php /var/www/html/artisan tinker'
     PHP_VERSION = '8.3'
 
 [env]
-  APP_URL = 'https://simple-todos.fly.dev/'
+  APP_URL = 'https://simple-todos.fly.dev'
   APP_ENV = 'production'
   DB_CONNECTION = 'pgsql'
   LOG_CHANNEL = 'stderr'
