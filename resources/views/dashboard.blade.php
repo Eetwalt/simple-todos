@@ -9,12 +9,7 @@
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <x-button primary>Create new task</x-button>
-                    <x-dropdown>
-                        <x-dropdown.item label="Settings" />
-                        <x-dropdown.item label="My Profile" />
-                        <x-dropdown.item label="Logout" />
-                    </x-dropdown>
+                    {{-- <x-wui-badge color="primary">Hello World</x-wui-badge> --}}
                 </div>
             </div>
         </div>
