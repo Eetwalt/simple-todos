@@ -28,35 +28,7 @@
                     </form>
                 </x-slot>
             </x-wui-card>
-            <div class="grid grid-cols-3 gap-4">
-                <x-wui-card>
-                    <x-slot name="title">
-                        Todo title goes here
-                    </x-slot>
-                    <x-slot name="slot">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tincidunt dui eget scelerisque
-                        dapibus. Quisque mattis dignissim cursus. Pellentesque sed arcu ac augue bibendum gravida.
-                    </x-slot>
-                </x-wui-card>
-                <x-wui-card>
-                    <x-slot name="title">
-                        Todo title goes here
-                    </x-slot>
-                    <x-slot name="slot">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tincidunt dui eget scelerisque
-                        dapibus. Quisque mattis dignissim cursus. Pellentesque sed arcu ac augue bibendum gravida.
-                    </x-slot>
-                </x-wui-card>
-                <x-wui-card>
-                    <x-slot name="title">
-                        Todo title goes here
-                    </x-slot>
-                    <x-slot name="slot">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tincidunt dui eget scelerisque
-                        dapibus. Quisque mattis dignissim cursus. Pellentesque sed arcu ac augue bibendum gravida.
-                    </x-slot>
-                </x-wui-card>
-            </div>
+            <livewire:tasks.show-tasks />
         </div>
     </div>
 </x-app-layout>
