@@ -15,27 +15,63 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <wireui:scripts />
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        <livewire:layout.navigation />
 
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white shadow dark:bg-gray-800">
-                <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
+    {{-- The navbar with `sticky` and `full-width` --}}
+    <x-mary-nav sticky full-width class="border-b border-gray-200 bg-base-200 dark:bg-base-300 dark:border-gray-700">
 
-        <!-- Page Content -->
-        <main>
+        <x-slot:brand>
+            {{-- Drawer toggle for "main-drawer" --}}
+            <label for="main-drawer" class="mr-3 lg:hidden">
+                <x-mary-icon name="o-bars-3" class="cursor-pointer" />
+            </label>
+
+            {{-- Brand --}}
+            <div>Simple Tasks</div>
+        </x-slot:brand>
+
+        {{-- Right side actions --}}
+        <x-slot:actions>
+            {{-- <x-mary-theme-toggle /> --}}
+        </x-slot:actions>
+    </x-mary-nav>
+
+    {{-- The main content with `full-width` --}}
+    <x-mary-main with-nav full-width>
+
+        {{-- This is a sidebar that works also as a drawer on small screens --}}
+        {{-- Notice the `main-drawer` reference here --}}
+        <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200 dark:bg-base-300">
+
+            {{-- User --}}
+            @if ($user = auth()->user())
+                <x-mary-list-item :item="$user" value="name" sub-value="email" no-separator no-hover
+                    class="pt-2">
+                    <x-slot:actions>
+                        <x-mary-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff"
+                            no-wire-navigate link="/logout" />
+                    </x-slot:actions>
+                </x-mary-list-item>
+            @endif
+
+            {{-- Activates the menu item when a route matches the `link` property --}}
+            <x-mary-menu activate-by-route>
+                <x-mary-menu-item title="Tasks" icon="o-document" link="/tasks" />
+                <x-mary-menu-item title="Stats" icon="o-chart-bar" link="###" />
+                <x-mary-menu-item title="Profile" icon="o-user" link="/profile" />
+            </x-mary-menu>
+        </x-slot:sidebar>
+
+        {{-- The `$slot` goes here --}}
+        <x-slot:content class="max-h-dvh">
             {{ $slot }}
-        </main>
-    </div>
+        </x-slot:content>
+    </x-mary-main>
+
+    {{--  TOAST area --}}
+    <x-mary-toast />
 </body>
 
 </html>

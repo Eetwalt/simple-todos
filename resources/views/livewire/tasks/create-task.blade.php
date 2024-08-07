@@ -3,6 +3,8 @@
 use Livewire\Volt\Component;
 
 new class extends Component {
+    public bool $myModal1 = false;
+
     public $taskTitle;
     public $taskDescription;
     public $taskLink;
@@ -34,25 +36,25 @@ new class extends Component {
     }
 }; ?>
 
-<x-wui-card>
-    <x-slot name="title" class="!text-black">
-        Add a new task
-    </x-slot>
-    <x-slot name="slot" class="!text-black">
-        <form class="flex flex-col gap-4" wire:submit.prevent="create">
-            <div class="flex gap-6">
-                <div class="flex flex-col w-6/12 gap-4">
-                    <x-wui-input label="Title" placeholder="Enter a title" required wire:model="taskTitle" />
-                    <x-wui-textarea label="Description" placeholder="Enter a description"
-                        wire:model="taskDescription" />
-                </div>
-                <div class="flex flex-col w-6/12 gap-4">
-                    <x-wui-input label="Link" placeholder="Link to a resource" wire:model="taskLink" />
-                    <x-wui-datetime-picker label="Due Date" placeholder="Select a date" parse-format="DD-MM-YYYY"
-                        without-time="true" wire:model="taskDueDate" />
-                    <x-wui-button type="submit" class="ml-auto">Create todo</x-wui-button>
-                </div>
-            </div>
-        </form>
-    </x-slot>
-</x-wui-card>
+<div>
+    <x-mary-modal wire:model="myModal1" class="backdrop-blur">
+        <x-slot name="title" class="!text-black">
+            Add a new task
+        </x-slot>
+        <x-slot name="slot" class="!text-black">
+            <form class="flex flex-col gap-4" wire:submit.prevent="create">
+                <x-mary-input label="Title" placeholder="Enter a title" required wire:model="taskTitle" />
+                <x-mary-textarea label="Description" placeholder="Enter a description" wire:model="taskDescription" />
+                <x-mary-input label="Link" placeholder="Link to a resource" wire:model="taskLink" icon="o-link" />
+                <x-mary-datetime label="Due date" placeholder="Select a date" wire:model="taskDueDate"
+                    icon="o-calendar" />
+                <x-mary-button label="Create" type="submit" spinner="create" class="btn-primary" />
+            </form>
+        </x-slot>
+
+        <x-mary-button label="Cancel" @click="$wire.myModal1 = false" />
+    </x-mary-modal>
+
+    <x-mary-button label="Create task" @click="$wire.myModal1 = true" class="btn-primary" icon-right="o-plus" />
+
+</div>
