@@ -18,24 +18,18 @@
 </head>
 
 <body class="min-h-screen font-sans antialiased">
-
-
-
     {{-- The main content with `full-width` --}}
     <x-mary-main full-width full-height>
-
         {{-- This is a sidebar that works also as a drawer on small screens --}}
         {{-- Notice the `main-drawer` reference here --}}
         <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-300">
             <livewire:sidebar-menu />
         </x-slot:sidebar>
-
         {{-- The `$slot` goes here --}}
         <x-slot:content>
             {{ $slot }}
         </x-slot:content>
     </x-mary-main>
-
     {{--  TOAST area --}}
     <x-mary-toast />
 </body>

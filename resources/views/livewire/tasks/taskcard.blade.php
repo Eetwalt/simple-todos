@@ -48,7 +48,4 @@ new class extends Component {
             @endif
         </div>
     </div>
-    <div class="self-start">
-
-    </div>
 </div>
