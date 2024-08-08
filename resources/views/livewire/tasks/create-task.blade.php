@@ -3,7 +3,7 @@
 use Livewire\Volt\Component;
 
 new class extends Component {
-    public bool $myModal1 = false;
+    public bool $createTaskModal = false;
 
     public $taskTitle;
     public $taskDescription;
@@ -37,7 +37,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    <x-mary-modal wire:model="myModal1" class="backdrop-blur">
+    <x-mary-modal wire:model="createTaskModal" class="backdrop-blur">
         <x-slot name="title" class="!text-black">
             Add a new task
         </x-slot>
@@ -52,9 +52,9 @@ new class extends Component {
             </form>
         </x-slot>
 
-        <x-mary-button label="Cancel" @click="$wire.myModal1 = false" />
+        <x-mary-button label="Cancel" @click="$wire.createTaskModal = false" />
     </x-mary-modal>
 
-    <x-mary-button label="Create task" @click="$wire.myModal1 = true" class="btn-primary" icon-right="o-plus" />
-
+    <x-mary-button label="Create task" @click="$wire.createTaskModal = true" class="self-end btn-primary"
+        icon-right="o-plus" />
 </div>

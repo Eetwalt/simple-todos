@@ -63,22 +63,22 @@ new class extends Component {
 
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h2 class="text-lg font-medium">
             {{ __('Profile Information') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <p class="mt-1 text-sm text-primary/75">
             {{ __("Update your account's profile information and email address.") }}
         </p>
     </header>
 
     <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
         <div>
-            <x-wui-input wire:model="name" label="Name" placeholder="your name" required autofocus autocomplete="name" />
+            <x-mary-input wire:model="name" label="Name" placeholder="your name" required autofocus autocomplete="name" />
         </div>
 
         <div>
-            <x-wui-input wire:model="email" label="Email" id="email" placeholder="Email" required
+            <x-mary-input wire:model="email" label="Email" id="email" placeholder="Email" required
                 autocomplete="email" />
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
@@ -86,10 +86,10 @@ new class extends Component {
                     <p class="mt-2 text-sm text-gray-800 dark:text-gray-200">
                         {{ __('Your email address is unverified.') }}
 
-                        <x-wui-button wire:click.prevent="sendVerification"
+                        <x-mary-button wire:click.prevent="sendVerification"
                             class="text-sm text-gray-600 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
                             {{ __('Click here to re-send the verification email.') }}
-                        </x-wui-button>
+                        </x-mary-button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
@@ -102,7 +102,7 @@ new class extends Component {
         </div>
 
         <div class="flex items-center gap-4">
-            <x-wui-button type="submit" color="secondary">{{ __('Save') }}</x-wui-button>
+            <x-mary-button type="submit" class="btn-primary">{{ __('Save') }}</x-mary-button>
 
             <x-action-message class="me-3" on="profile-updated">
                 {{ __('Saved.') }}

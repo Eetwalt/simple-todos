@@ -6,7 +6,7 @@
     </x-slot>
 
 
-    <div class="flex flex-col h-full gap-8">
+    <div class="flex flex-col h-full gap-6">
         <livewire:tasks.create-task />
         <livewire:tasks.show-tasks />
     </div>
