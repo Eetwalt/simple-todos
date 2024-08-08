@@ -3,7 +3,11 @@
 use Livewire\Volt\Component;
 
 new class extends Component {
-    public bool $showDoneTasks = true;
+    public $todos;
+    public $inProgress;
+    public $waiting;
+    public $done;
+    public bool $showDoneTasks = false;
     public bool $taskModal = false;
     public $openTask = null;
 
@@ -11,19 +15,18 @@ new class extends Component {
         'refreshTaskList' => '$refresh',
     ];
 
-    public function with()
+    public function getTasks()
     {
         $tasks = Auth::user()->tasks()->latest()->get();
-        $todoTasks = $tasks->where('status', 'Todo');
-        $inProgressTasks = $tasks->where('status', 'In progress');
-        $waitingTasks = $tasks->where('status', 'Waiting');
-        $doneTasks = $tasks->where('status', 'Done');
-        return [
-            'todoTasks' => $todoTasks,
-            'inProgressTasks' => $inProgressTasks,
-            'waitingTasks' => $waitingTasks,
-            'doneTasks' => $doneTasks,
-        ];
+        $this->todos = $tasks->where('status', 'Todo');
+        $this->inProgress = $tasks->where('status', 'In progress');
+        $this->waiting = $tasks->where('status', 'Waiting');
+        $this->done = $tasks->where('status', 'Done');
+    }
+
+    public function mount()
+    {
+        $this->getTasks();
     }
 
     public function updateStatus($id, $status)
@@ -31,6 +34,7 @@ new class extends Component {
         $task = auth()->user()->tasks()->find($id);
         $task->status = $status;
         $task->save();
+        $this->getTasks();
     }
 
     public function openModal($id)
@@ -55,8 +59,13 @@ new class extends Component {
                 </div>
                 <div class="flex flex-col gap-4">
                     <p>{{ $openTask->description }}</p>
-                    <x-mary-button label="Complete task" class="self-end btn-primary btn-sm" icon-right="o-check"
-                        wire:click="updateStatus({{ $openTask->id }}, 'Done')" />
+                    @if ($openTask->status === 'Done')
+                        <x-mary-button label="In progress" class="self-end bg-base-300 btn-sm" icon="o-arrow-left"
+                            wire:click="updateStatus({{ $openTask->id }}, 'In progress')" />
+                    @else
+                        <x-mary-button label="Complete task" class="self-end btn-primary btn-sm" icon-right="o-check"
+                            wire:click="updateStatus({{ $openTask->id }}, 'Done')" />
+                    @endif
                 </div>
             </x-slot>
         @endif
@@ -64,51 +73,168 @@ new class extends Component {
 
     <div class="grid grid-cols-3 gap-4 min-h-16 mb-14">
         <div class="space-y-2">
-            <div class="flex items-center gap-1">
-                <x-mary-icon name="o-square-2-stack" class="text-primary" />
-                <p class="text-sm font-semibold uppercase mt-[2px]">Todo</p>
+            <div class="flex justify-between w-full">
+                <div class="flex items-center gap-1">
+                    <x-mary-icon name="o-square-2-stack" class="text-primary" />
+                    <p class="text-sm font-semibold uppercase mt-[2px]">Todo</p>
+                </div>
+                <p class="text-sm text-primary/75">{{ $todos->count() }} tasks</p>
             </div>
             <div class="flex flex-col h-full gap-4 p-4 border rounded-lg border-primary bg-primary/10">
-                @if ($todoTasks->isEmpty())
+                @if ($todos->isEmpty())
                     <p class="text-sm text-primary/75">No tasks to show</p>
                 @else
-                    @foreach ($todoTasks as $task)
-                        <p class="text-sm text-primary/75">{{ $todoTasks->count() }} tasks</p>
-                        <livewire:tasks.taskcard :task="$task" :key="$task->id" />
+                    @foreach ($todos as $task)
+                        <div :key="$task - > id"
+                            class="h-56 p-5 transition-all duration-300 border rounded-lg text-primary bg-base-200/90 border-primary/20 hover:border-primary/50 hover:shadow-lg shadow-black">
+                            <div class="flex flex-col h-full">
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between w-full">
+                                        <button wire:click="openModal({{ $task->id }})"
+                                            class="text-xl font-semibold text-gray-300 transition-all duration-300 border-b-2 border-transparent cursor-pointer hover:border-gray-300">
+                                            {{ $task->title }}
+                                        </button>
+                                        <div class="flex gap-1">
+                                            <x-mary-button icon="o-chevron-right"
+                                                class="btn-circle btn-sm btn-outline border-primary hover:bg-primary/50 text-primary"
+                                                wire:click="updateStatus({{ $task->id }}, 'In progress')" />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <p class="text-sm text-primary">
+                                            {{ Str::limit($task->description, 100) }}
+                                        </p>
+                                        <a href="{{ $task->link }}" target="_blank"
+                                            class="text-sm underline text-primary underline-offset-2">
+                                            {{ Str::limit($task->link, 45) }}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="flex items-end justify-between mt-auto">
+                                    <p class="text-xs opacity-75">Due:
+                                        {{ Carbon\Carbon::parse($task->due_date)->format('d.m.Y') }}</p>
+                                    <div class="gap-2">
+                                        <x-mary-button label="Complete" class="btn-primary btn-sm" icon-right="o-check"
+                                            wire:click="updateStatus({{ $task->id }}, 'Done')" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                 @endif
             </div>
         </div>
         <div class="space-y-2">
-            <div class="flex items-center gap-1">
-                <x-mary-icon name="o-puzzle-piece" class="text-primary" />
-                <p class="text-sm font-semibold uppercase mt-[2px]">In progress</p>
+            <div class="flex justify-between w-full">
+                <div class="flex items-center gap-1">
+                    <x-mary-icon name="o-puzzle-piece" class="text-primary" />
+                    <p class="text-sm font-semibold uppercase mt-[2px]">In progress</p>
+                </div>
+                <p class="text-sm text-primary/75">{{ $inProgress->count() }} tasks</p>
             </div>
 
             <div class="flex flex-col h-full gap-4 p-4 border rounded-lg border-primary bg-primary/10">
-                @if ($inProgressTasks->isEmpty())
+                @if ($inProgress->isEmpty())
                     <p class="text-sm text-primary/75">No tasks to show</p>
                 @else
-                    <p class="text-sm text-primary/75">{{ $inProgressTasks->count() }} tasks</p>
-                    @foreach ($inProgressTasks as $task)
-                        <livewire:tasks.taskcard :task="$task" :key="$task->id" />
+                    @foreach ($inProgress as $task)
+                        <div :key="$task - > id"
+                            class="h-56 p-5 transition-all duration-300 border rounded-lg text-primary bg-base-200/90 border-primary/20 hover:border-primary/50 hover:shadow-lg shadow-black">
+                            <div class="flex flex-col h-full">
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between w-full">
+                                        <button wire:click="openModal({{ $task->id }})"
+                                            class="text-xl font-semibold text-gray-300 transition-all duration-300 border-b-2 border-transparent cursor-pointer hover:border-gray-300">
+                                            {{ $task->title }}
+                                        </button>
+                                        <div class="flex gap-1">
+                                            <x-mary-button icon="o-chevron-left"
+                                                class="btn-circle btn-sm btn-outline border-primary hover:bg-primary/50 text-primary"
+                                                wire:click="updateStatus({{ $task->id }}, 'Todo' )" />
+
+                                            <x-mary-button icon="o-chevron-right"
+                                                class="btn-circle btn-sm btn-outline border-primary hover:bg-primary/50 text-primary"
+                                                wire:click="updateStatus({{ $task->id }}, 'Waiting' )" />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <p class="text-sm text-primary">
+                                            {{ Str::limit($task->description, 100) }}
+                                        </p>
+                                        <a href="{{ $task->link }}" target="_blank"
+                                            class="text-sm underline text-primary underline-offset-2">
+                                            {{ Str::limit($task->link, 45) }}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="flex items-end justify-between mt-auto">
+                                    <p class="text-xs opacity-75">Due:
+                                        {{ Carbon\Carbon::parse($task->due_date)->format('d.m.Y') }}</p>
+                                    <div class="gap-2">
+                                        <x-mary-button label="Complete" class="btn-primary btn-sm" icon-right="o-check"
+                                            wire:click="updateStatus({{ $task->id }}, 'Done')" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                 @endif
             </div>
         </div>
         <div class="space-y-2">
-            <div class="flex items-center gap-1">
-                <x-mary-icon name="o-clock" class="text-primary" />
-                <p class="text-sm font-semibold uppercase mt-[2px]">Waiting</p>
+            <div class="flex justify-between w-full">
+                <div class="flex items-center gap-1">
+                    <x-mary-icon name="o-clock" class="text-primary" />
+                    <p class="text-sm font-semibold uppercase mt-[2px]">Waiting</p>
+                </div>
+                <p class="text-sm text-primary/75">{{ $waiting->count() }} tasks</p>
             </div>
 
             <div class="flex flex-col h-full gap-4 p-4 border rounded-lg border-primary bg-primary/10">
-                @if ($waitingTasks->isEmpty())
+                @if ($waiting->isEmpty())
                     <p class="text-sm text-primary/75">No tasks to show</p>
                 @else
-                    @foreach ($waitingTasks as $task)
-                        <p class="text-sm text-primary/75">{{ $waitingTasks->count() }} tasks</p>
-                        <livewire:tasks.taskcard :task="$task" :key="$task->id" />
+                    @foreach ($waiting as $task)
+                        <div :key="$task - > id"
+                            class="h-56 p-5 transition-all duration-300 border rounded-lg text-primary bg-base-200/90 border-primary/20 hover:border-primary/50 hover:shadow-lg shadow-black">
+                            <div class="flex flex-col h-full">
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between w-full">
+                                        <button wire:click="openModal({{ $task->id }})"
+                                            class="text-xl font-semibold text-gray-300 transition-all duration-300 border-b-2 border-transparent cursor-pointer hover:border-gray-300">
+                                            {{ $task->title }}
+                                        </button>
+                                        <div class="flex gap-1">
+
+                                            <x-mary-button icon="o-chevron-left"
+                                                class="btn-circle btn-sm btn-outline border-primary hover:bg-primary/50 text-primary"
+                                                wire:click="updateStatus({{ $task->id }}, 'In progress')" />
+
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <p class="text-sm text-primary">
+                                            {{ Str::limit($task->description, 100) }}
+                                        </p>
+                                        <a href="{{ $task->link }}" target="_blank"
+                                            class="text-sm underline text-primary underline-offset-2">
+                                            {{ Str::limit($task->link, 45) }}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="flex items-end justify-between mt-auto">
+                                    <p class="text-xs opacity-75">Due:
+                                        {{ Carbon\Carbon::parse($task->due_date)->format('d.m.Y') }}</p>
+                                    <div class="gap-2">
+                                        <x-mary-button label="Complete" class="btn-primary btn-sm"
+                                            icon-right="o-check"
+                                            wire:click="updateStatus({{ $task->id }}, 'Done')" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                 @endif
             </div>
@@ -124,20 +250,49 @@ new class extends Component {
             </x-slot:heading>
             <x-slot:content>
                 <div class="">
-                    @if ($doneTasks->isEmpty())
+                    @if ($done->isEmpty())
                         <p class="text-sm text-primary/75">No tasks to show</p>
                     @else
-                        <p class="text-sm text-primary/75">{{ $doneTasks->count() }} tasks</p>
+                        <p class="text-sm text-primary/75">{{ $done->count() }} tasks</p>
                         <div class="grid grid-cols-3 gap-4">
-                            @foreach ($doneTasks as $task)
-                                <livewire:tasks.taskcard :task="$task" :key="$task->id" />
+                            @foreach ($done as $task)
+                                <div
+                                    class="h-56 p-5 transition-all duration-300 border rounded-lg text-primary bg-base-200/90 border-primary/20 hover:border-primary/50 hover:shadow-lg shadow-black">
+                                    <div class="flex flex-col h-full">
+                                        <div class="space-y-4">
+                                            <div class="flex items-center justify-between w-full">
+                                                <button wire:click="openModal({{ $task->id }})"
+                                                    class="text-xl font-semibold text-gray-300 transition-all duration-300 border-b-2 border-transparent cursor-pointer hover:border-gray-300">
+                                                    {{ $task->title }}
+                                                </button>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <p class="text-sm text-primary">
+                                                    {{ Str::limit($task->description, 100) }}
+                                                </p>
+                                                <a href="{{ $task->link }}" target="_blank"
+                                                    class="text-sm underline text-primary underline-offset-2">
+                                                    {{ Str::limit($task->link, 45) }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-end justify-between mt-auto">
+                                            <p class="text-xs opacity-75">Due:
+                                                {{ Carbon\Carbon::parse($task->due_date)->format('d.m.Y') }}</p>
+                                            <div class="gap-2">
+                                                <x-mary-button label="In progress" class="bg-base-300 btn-sm"
+                                                    icon="o-arrow-left"
+                                                    wire:click="updateStatus({{ $task->id }}, 'In progress')" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @endforeach
                         </div>
                     @endif
                 </div>
             </x-slot:content>
         </x-mary-collapse>
-
-
     </div>
 </div>
