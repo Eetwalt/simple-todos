@@ -26,6 +26,11 @@
         </x-slot:sidebar>
         {{-- The `$slot` goes here --}}
         <x-slot:content>
+            <div
+                class="absolute top-0 left-0 w-full h-full opacity-50 -z-20 bg-gradient-to-tr from-base-200 to-primary/10">
+            </div>
+            <div class="absolute top-0 left-0 w-full h-full bg-repeat bg-[220px] -z-10 opacity-20 bg-noise-pattern">
+            </div>
             {{ $slot }}
         </x-slot:content>
     </x-mary-main>

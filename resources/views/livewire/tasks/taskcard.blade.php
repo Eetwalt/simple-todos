@@ -6,11 +6,12 @@ new class extends Component {
     public $task;
 }; ?>
 
-<div class="p-5 rounded-lg text-primary bg-base-200 min-h-48">
+<div
+    class="h-48 p-5 transition-all duration-300 border rounded-lg text-primary bg-base-200/90 border-primary/20 hover:border-primary/50 hover:shadow-lg shadow-black">
     <div class="flex flex-col h-full">
         <div class="space-y-4">
             <div class="flex items-center justify-between w-full">
-                <p class="text-xl font-semibold">
+                <p class="text-xl font-semibold text-slate-300">
                     {{ $task->title }}
                 </p>
                 <div class="flex gap-1">
@@ -33,19 +34,22 @@ new class extends Component {
                 </div>
             </div>
             <p class="text-sm text-primary">
-                {{ $task->description }}
+                {{ Str::limit($task->description, 170) }}
             </p>
         </div>
-        <div class="flex items-center justify-end gap-2 mt-auto">
-            <x-mary-button class="btn-circle btn-sm btn-outline border-primary hover:bg-primary/50 text-primary"
-                icon="o-eye" wire:click="$parent.openModal({{ $task->id }})" />
-            @if ($task->status === 'Done')
-                <x-mary-button label="In progress" class="bg-base-300 btn-sm" icon="o-arrow-left"
-                    wire:click="$parent.updateStatus({{ $task->id }}, 'In progress')" />
-            @else
-                <x-mary-button label="Complete" class="btn-primary btn-sm" icon-right="o-check"
-                    wire:click="$parent.updateStatus({{ $task->id }}, 'Done')" />
-            @endif
+        <div class="flex items-end justify-between mt-auto">
+            <p class="text-xs opacity-75">Due: {{ Carbon\Carbon::parse($task->due_date)->format('d.m.Y') }}</p>
+            <div class="gap-2">
+                <x-mary-button class="btn-circle btn-sm btn-outline border-primary hover:bg-primary/50 text-primary"
+                    icon="o-eye" wire:click="$parent.openModal({{ $task->id }})" />
+                @if ($task->status === 'Done')
+                    <x-mary-button label="In progress" class="bg-base-300 btn-sm" icon="o-arrow-left"
+                        wire:click="$parent.updateStatus({{ $task->id }}, 'In progress')" />
+                @else
+                    <x-mary-button label="Complete" class="btn-primary btn-sm" icon-right="o-check"
+                        wire:click="$parent.updateStatus({{ $task->id }}, 'Done')" />
+                @endif
+            </div>
         </div>
     </div>
 </div>

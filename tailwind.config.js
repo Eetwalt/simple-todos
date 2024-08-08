@@ -9,18 +9,19 @@ export default {
         './resources/views/**/*.blade.php',
         "./vendor/robsontenorio/mary/src/View/Components/**/*.php"
     ],
-
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            backgroundImage: {
+                'noise-pattern': "url('/resources/images/noise-light.png')",
+            }
         },
     },
     daisyui: {
         themes: ["coffee"],
     },
-
     plugins: [
         forms,
         require("daisyui")
