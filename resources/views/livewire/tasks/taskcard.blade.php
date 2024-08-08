@@ -11,9 +11,10 @@ new class extends Component {
     <div class="flex flex-col h-full">
         <div class="space-y-4">
             <div class="flex items-center justify-between w-full">
-                <p class="text-xl font-semibold text-slate-300">
+                <button wire:click="$parent.openModal({{ $task->id }})"
+                    class="text-xl font-semibold text-gray-300 transition-all duration-300 border-b-2 border-transparent cursor-pointer hover:border-gray-300">
                     {{ $task->title }}
-                </p>
+                </button>
                 <div class="flex gap-1">
                     @if ($task->status === 'Todo')
                         <x-mary-button icon="o-chevron-right"

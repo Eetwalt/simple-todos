@@ -48,7 +48,7 @@ new class extends Component {
         @if ($openTask)
             <x-slot name="slot" class="!text-black">
                 <div class="flex items-start justify-between w-full mb-4">
-                    <p class="text-2xl font-semibold">
+                    <p class="text-2xl font-semibold text-gray-300">
                         {{ $openTask->title }}
                     </p>
                     <x-mary-button class="btn-sm btn-circle" icon="o-x-mark" @click="$wire.taskModal = false" />
